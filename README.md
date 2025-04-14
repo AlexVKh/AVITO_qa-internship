@@ -24,7 +24,7 @@
 
 ### 2. Скачайте коллекцию
 Сохраните Postman-коллекцию по ссылке:  
-📁 [Postman_collection.json](https://github.com/AlexVKh/AVITO_qa-internship/blob/main/Postman_collection.json)
+[Postman_collection.json](https://github.com/AlexVKh/AVITO_qa-internship/blob/main/Postman_collection.json)
 
 ### 3. Импортируйте коллекцию в Postman:
 - Откройте Postman → **Import**
