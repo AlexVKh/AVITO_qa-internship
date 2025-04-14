@@ -1,0 +1,3890 @@
+{
+	"info": {
+		"_postman_id": "943900b6-efb9-4b2e-a22c-a6ac159837b6",
+		"name": "AVITO_qa-internship",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41736526"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "1",
+					"item": [
+						{
+							"name": "item",
+							"item": [
+								{
+									"name": "{id}",
+									"item": [
+										{
+											"name": "Создание объявления",
+											"item": [
+												{
+													"name": "Успешное",
+													"event": [
+														{
+															"listen": "prerequest",
+															"script": {
+																"exec": [
+																	"function generateRandomID(min, max) {",
+																	"    return Math.floor(Math.random() * (max - min + 1)) + min;",
+																	"}",
+																	"",
+																	"let usedIDs = pm.environment.get(\"usedIDs\");",
+																	"if (!usedIDs) {",
+																	"    usedIDs = [];",
+																	"} else {",
+																	"    usedIDs = JSON.parse(usedIDs);",
+																	"}",
+																	"",
+																	"let uniqueID;",
+																	"let isUnique = false;",
+																	"",
+																	"",
+																	"while (!isUnique) {",
+																	"    uniqueID = generateRandomID(111111, 999999); ",
+																	"    if (!usedIDs.includes(uniqueID)) {",
+																	"        isUnique = true; ",
+																	"        usedIDs.push(uniqueID); ",
+																	"    }",
+																	"}",
+																	"",
+																	"pm.collectionVariables.set(\"usedIDs\", JSON.stringify(usedIDs));",
+																	"pm.collectionVariables.set(\"uniqueID\", uniqueID);",
+																	"",
+																	"const categories = [",
+																	"    \"Велосипед\", \"Телефон\", \"Книга\", \"Одежда\", \"Электроника\",",
+																	"    \"Мебель\", \"Игрушка\", \"Автомобиль\", \"Аксессуар\", \"Обувь\"",
+																	"];",
+																	"",
+																	"const modifiers = [",
+																	"    \"Женский\", \"Мужской\", \"Универсальный\", \"Детский\", \"Подростковый\"",
+																	"];",
+																	"",
+																	"const brands = [",
+																	"    \"Apple\", \"Samsung\", \"Nike\", \"Adidas\", \"Xiaomi\", \"Huawei\", \"Bosch\", \"IKEA\"",
+																	"];",
+																	"",
+																	"const conditions = [",
+																	"    \"Новый\", \"Б/у в отличном состоянии\", \"Следы эксплуатации\", \"Почти новый\"",
+																	"];",
+																	"",
+																	"const features = [",
+																	"    \"С гарантией\", \"С доставкой\", \"Со скидкой\", \"В наличии\", \"Ограниченный выпуск\"",
+																	"];",
+																	"",
+																	"function getRandomElement(array) {",
+																	"    return array[Math.floor(Math.random() * array.length)];",
+																	"}",
+																	"",
+																	"const category = getRandomElement(categories);",
+																	"const modifier = getRandomElement(modifiers);",
+																	"const brand = getRandomElement(brands);",
+																	"const condition = getRandomElement(conditions);",
+																	"const feature = getRandomElement(features);",
+																	"",
+																	"const name = `${condition} ${category} ${modifier} (${brand}) - ${feature}`;",
+																	"",
+																	"const price = Math.floor(Math.random() * (100000 - 100 + 1)) + 100; ",
+																	"",
+																	"const viewCount = Math.floor(Math.random() * 10000); ",
+																	"const likes = Math.floor(Math.random() * viewCount); ",
+																	"const contacts = Math.floor(Math.random() * likes); ",
+																	"",
+																	"pm.collectionVariables.set(\"name\", name);",
+																	"pm.collectionVariables.set(\"price\", price);",
+																	"pm.collectionVariables.set(\"likes\", likes);",
+																	"pm.collectionVariables.set(\"viewCount\", viewCount);",
+																	"pm.collectionVariables.set(\"contacts\", contacts);",
+																	"",
+																	""
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														},
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 200\", () => pm.response.to.have.status(200));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Поле status присутствует\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Текст перед ID не меняется\", () => pm.expect(pm.response.json().status.startsWith(\"Сохранили объявление - \")).to.be.true);",
+																	"pm.test(\"ID присутствует в поле status\", () => pm.expect(pm.response.json().status.match(/-\\s*([a-f0-9\\-]+)/)).to.not.be.null);",
+																	"pm.test(\"ID имеет формат UUID\", () => pm.expect(pm.response.json().status.match(/-\\s*([a-f0-9\\-]+)/)[1]).to.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/));",
+																	"pm.collectionVariables.set(\"advertisementID\", pm.response.json().status.match(/-\\s*([a-f0-9\\-]+)/)[1]);",
+																	"",
+																	""
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"sellerID\": {{uniqueID}},\n  \"name\": \"{{name}}\",\n  \"price\": {{price}},\n  \"statistics\": {\n    \"likes\": {{likes}},\n    \"viewCount\": {{viewCount}},\n    \"contacts\": {{contacts}}\n  }\n}",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/1/item",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"item"
+															]
+														},
+														"description": "Сохранить объявление"
+													},
+													"response": [
+														{
+															"name": "Success response",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n  \"sellerID\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n}",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item"
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"id\": \"<string>\",\n  \"sellerId\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  },\n  \"createdAt\": \"<string>\"\n}"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n  \"sellerID\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n}",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item"
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "Повторяющееся",
+													"event": [
+														{
+															"listen": "prerequest",
+															"script": {
+																"exec": [
+																	""
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														},
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 400\", () => pm.response.to.have.status(400));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Поле status присутствует\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"",
+																	""
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"sellerID\": {{uniqueID}},\n  \"name\": \"{{name}}\",\n  \"price\": {{price}},\n  \"statistics\": {\n    \"likes\": {{likes}},\n    \"viewCount\": {{viewCount}},\n    \"contacts\": {{contacts}}\n  }\n}",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/1/item",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"item"
+															]
+														},
+														"description": "Сохранить объявление"
+													},
+													"response": [
+														{
+															"name": "Success response",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n  \"sellerID\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n}",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item"
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"id\": \"<string>\",\n  \"sellerId\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  },\n  \"createdAt\": \"<string>\"\n}"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n  \"sellerID\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n}",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item"
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "Без обязательных полей",
+													"event": [
+														{
+															"listen": "prerequest",
+															"script": {
+																"exec": [
+																	""
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														},
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 400\", () => pm.response.to.have.status(400));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message пустое\", () => pm.expect(pm.response.json().result.message).to.be.empty);",
+																	"pm.test(\"Наличие поля messages в result\", () => pm.expect(pm.response.json().result).to.have.property(\"messages\"));",
+																	"pm.test(\"Поле messages является объектом\", () => pm.expect(pm.response.json().result.messages).to.be.an('object'));",
+																	"pm.test(\"Поле messages пустое\", () => pm.expect(Object.keys(pm.response.json().result.messages)).to.be.empty);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status содержит текст 'не передано тело объявлени'\", () => pm.expect(pm.response.json().status).to.equal(\"не передано тело объявлени\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"name\": \"<string>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n}",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/1/item",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"item"
+															]
+														},
+														"description": "Сохранить объявление"
+													},
+													"response": [
+														{
+															"name": "Success response",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n  \"sellerID\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n}",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item"
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"id\": \"<string>\",\n  \"sellerId\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  },\n  \"createdAt\": \"<string>\"\n}"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n  \"sellerID\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n}",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item"
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "С невалидным SellerID",
+													"event": [
+														{
+															"listen": "prerequest",
+															"script": {
+																"exec": [
+																	"function generateRandomID(min, max) {",
+																	"    return Math.floor(Math.random() * (max - min + 1)) + min;",
+																	"}",
+																	"",
+																	"let usedIDs = pm.environment.get(\"usedIDs\");",
+																	"if (!usedIDs) {",
+																	"    usedIDs = [];",
+																	"} else {",
+																	"    usedIDs = JSON.parse(usedIDs);",
+																	"}",
+																	"",
+																	"let uniqueID;",
+																	"let isUnique = false;",
+																	"",
+																	"",
+																	"while (!isUnique) {",
+																	"    uniqueID = generateRandomID(111111, 999999); ",
+																	"    if (!usedIDs.includes(uniqueID)) {",
+																	"        isUnique = true; ",
+																	"        usedIDs.push(uniqueID); ",
+																	"    }",
+																	"}",
+																	"",
+																	"pm.collectionVariables.set(\"usedIDs\", JSON.stringify(usedIDs));",
+																	"pm.collectionVariables.set(\"uniqueID\", uniqueID);",
+																	"",
+																	"const categories = [",
+																	"    \"Велосипед\", \"Телефон\", \"Книга\", \"Одежда\", \"Электроника\",",
+																	"    \"Мебель\", \"Игрушка\", \"Автомобиль\", \"Аксессуар\", \"Обувь\"",
+																	"];",
+																	"",
+																	"const modifiers = [",
+																	"    \"Женский\", \"Мужской\", \"Универсальный\", \"Детский\", \"Подростковый\"",
+																	"];",
+																	"",
+																	"const brands = [",
+																	"    \"Apple\", \"Samsung\", \"Nike\", \"Adidas\", \"Xiaomi\", \"Huawei\", \"Bosch\", \"IKEA\"",
+																	"];",
+																	"",
+																	"const conditions = [",
+																	"    \"Новый\", \"Б/у в отличном состоянии\", \"Следы эксплуатации\", \"Почти новый\"",
+																	"];",
+																	"",
+																	"const features = [",
+																	"    \"С гарантией\", \"С доставкой\", \"Со скидкой\", \"В наличии\", \"Ограниченный выпуск\"",
+																	"];",
+																	"",
+																	"function getRandomElement(array) {",
+																	"    return array[Math.floor(Math.random() * array.length)];",
+																	"}",
+																	"",
+																	"const category = getRandomElement(categories);",
+																	"const modifier = getRandomElement(modifiers);",
+																	"const brand = getRandomElement(brands);",
+																	"const condition = getRandomElement(conditions);",
+																	"const feature = getRandomElement(features);",
+																	"",
+																	"const name = `${condition} ${category} ${modifier} (${brand}) - ${feature}`;",
+																	"",
+																	"const price = Math.floor(Math.random() * (100000 - 100 + 1)) + 100; ",
+																	"",
+																	"const viewCount = Math.floor(Math.random() * 10000); ",
+																	"const likes = Math.floor(Math.random() * viewCount); ",
+																	"const contacts = Math.floor(Math.random() * likes); ",
+																	"",
+																	"pm.collectionVariables.set(\"name\", name);",
+																	"pm.collectionVariables.set(\"price\", price);",
+																	"pm.collectionVariables.set(\"likes\", likes);",
+																	"pm.collectionVariables.set(\"viewCount\", viewCount);",
+																	"pm.collectionVariables.set(\"contacts\", contacts);",
+																	"",
+																	""
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														},
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 400\", () => pm.response.to.have.status(400));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message содержит текст 'передан некорректный идентификатор объявления'\", () => pm.expect(pm.response.json().result.message).to.equal(\"передан некорректный идентификатор объявления\"));",
+																	"pm.test(\"Наличие поля messages в result\", () => pm.expect(pm.response.json().result).to.have.property(\"messages\"));",
+																	"pm.test(\"Поле messages является объектом\", () => pm.expect(pm.response.json().result.messages).to.be.an('object'));",
+																	"pm.test(\"Поле messages пустое\", () => pm.expect(Object.keys(pm.response.json().result.messages)).to.be.empty);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status равно '400'\", () => pm.expect(pm.response.json().status).to.equal(\"400\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json"
+															},
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "{\n  \"sellerID\": -1,\n  \"name\": \"{{name}}\",\n  \"price\": {{price}},\n  \"statistics\": {\n    \"likes\": {{likes}},\n    \"viewCount\": {{viewCount}},\n    \"contacts\": {{contacts}}\n  }\n}",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/1/item",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"item"
+															]
+														},
+														"description": "Сохранить объявление"
+													},
+													"response": [
+														{
+															"name": "Success response",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n  \"sellerID\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n}",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item"
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"id\": \"<string>\",\n  \"sellerId\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  },\n  \"createdAt\": \"<string>\"\n}"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "{\n  \"sellerID\": \"<integer>\",\n  \"name\": \"<string>\",\n  \"price\": \"<integer>\",\n  \"statistics\": {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n}",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item"
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												}
+											]
+										},
+										{
+											"name": "Получение объявления",
+											"item": [
+												{
+													"name": "Существующего",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 200\", () => pm.response.to.have.status(200));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Ответ является массивом\", () => pm.expect(pm.response.json()).to.be.an('array'));",
+																	"pm.test(\"Массив содержит один элемент\", () => pm.expect(pm.response.json().length).to.equal(1));",
+																	"pm.test(\"Наличие всех полей\", () => pm.expect(pm.response.json()[0]).to.have.all.keys(\"createdAt\", \"id\", \"name\", \"price\", \"sellerId\", \"statistics\"));",
+																	"pm.test(\"Поле createdAt является строкой\", () => pm.expect(pm.response.json()[0].createdAt).to.be.a('string'));",
+																	"pm.test(\"Поле createdAt имеет формат даты ISO 8601\", () => pm.expect(pm.response.json()[0].createdAt).to.match(/^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{6} \\+\\d{4} \\+\\d{4}$/));",
+																	"pm.test(\"Поле id является строкой\", () => pm.expect(pm.response.json()[0].id).to.be.a('string'));",
+																	"pm.test(\"Поле id имеет формат UUID\", () => pm.expect(pm.response.json()[0].id).to.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/));",
+																	"pm.test(\"Поле name является строкой\", () => pm.expect(pm.response.json()[0].name).to.be.a('string'));",
+																	"pm.test(\"Поле name не пустое\", () => pm.expect(pm.response.json()[0].name).to.not.be.empty);",
+																	"pm.test(\"Поле price является числом\", () => pm.expect(pm.response.json()[0].price).to.be.a('number'));",
+																	"pm.test(\"Поле price положительное\", () => pm.expect(pm.response.json()[0].price).to.be.above(0));",
+																	"pm.test(\"Поле sellerId является числом\", () => pm.expect(pm.response.json()[0].sellerId).to.be.a('number'));",
+																	"pm.test(\"Поле sellerId положительное\", () => pm.expect(pm.response.json()[0].sellerId).to.be.above(0));",
+																	"pm.test(\"Объект statistics присутствует\", () => pm.expect(pm.response.json()[0].statistics).to.be.an('object'));",
+																	"pm.test(\"Наличие всех полей в объекте statistics\", () => pm.expect(pm.response.json()[0].statistics).to.have.all.keys(\"contacts\", \"likes\", \"viewCount\"));",
+																	"pm.test(\"Поле contacts является числом\", () => pm.expect(pm.response.json()[0].statistics.contacts).to.be.a('number'));",
+																	"pm.test(\"Поле contacts неотрицательное\", () => pm.expect(pm.response.json()[0].statistics.contacts).to.be.at.least(0));",
+																	"pm.test(\"Поле likes является числом\", () => pm.expect(pm.response.json()[0].statistics.likes).to.be.a('number'));",
+																	"pm.test(\"Поле likes неотрицательное\", () => pm.expect(pm.response.json()[0].statistics.likes).to.be.at.least(0));",
+																	"pm.test(\"Поле viewCount является числом\", () => pm.expect(pm.response.json()[0].statistics.viewCount).to.be.a('number'));",
+																	"pm.test(\"Поле viewCount неотрицательное\", () => pm.expect(pm.response.json()[0].statistics.viewCount).to.be.at.least(0));",
+																	"pm.test(\"Логика: contacts <= likes <= viewCount\", () => {",
+																	"    const stats = pm.response.json()[0].statistics;",
+																	"    pm.expect(stats.contacts).to.be.at.most(stats.likes);",
+																	"    pm.expect(stats.likes).to.be.at.most(stats.viewCount);",
+																	"});"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														},
+														{
+															"listen": "prerequest",
+															"script": {
+																"packages": {},
+																"type": "text/javascript"
+															}
+														}
+													],
+													"protocolProfileBehavior": {
+														"disableBodyPruning": true
+													},
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "",
+															"options": {
+																"raw": {
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/1/item/{{advertisementID}}",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"item",
+																"{{advertisementID}}"
+															]
+														},
+														"description": "Получить объявление по идентификатору"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  },\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "Несуществующего",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 404\", () => pm.response.to.have.status(404));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message содержит текст 'item' и UUID\", () => pm.expect(pm.response.json().result.message).to.match(/^item [a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12} not found$/));",
+																	"pm.test(\"Наличие поля messages в result\", () => pm.expect(pm.response.json().result).to.have.property(\"messages\"));",
+																	"pm.test(\"Поле messages равно null\", () => pm.expect(pm.response.json().result.messages).to.be.null);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status равно '404'\", () => pm.expect(pm.response.json().status).to.equal(\"404\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														},
+														{
+															"listen": "prerequest",
+															"script": {
+																"exec": [
+																	""
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"protocolProfileBehavior": {
+														"disableBodyPruning": true
+													},
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "",
+															"options": {
+																"raw": {
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/1/item/6c1f8f94-e698-42f7-a151-77b0d9c47f1g",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"item",
+																"6c1f8f94-e698-42f7-a151-77b0d9c47f1g"
+															]
+														},
+														"description": "Получить объявление по идентификатору"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  },\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "С некорректным id",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 400\", () => pm.response.to.have.status(400));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message содержит текст 'ID айтема не UUID'\", () => pm.expect(pm.response.json().result.message).to.include(\"ID айтема не UUID\"));",
+																	"pm.test(\"Поле messages является объектом\", () => pm.expect(pm.response.json().result.messages).to.be.an('object'));",
+																	"pm.test(\"Поле messages пустое\", () => pm.expect(Object.keys(pm.response.json().result.messages)).to.be.empty);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status равно '100'\", () => pm.expect(pm.response.json().status).to.equal(\"100\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														},
+														{
+															"listen": "prerequest",
+															"script": {
+																"exec": [
+																	""
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"protocolProfileBehavior": {
+														"disableBodyPruning": true
+													},
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "",
+															"options": {
+																"raw": {
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/1/item/-1",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"item",
+																"-1"
+															]
+														},
+														"description": "Получить объявление по идентификатору"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  },\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "statistic",
+							"item": [
+								{
+									"name": "{id}",
+									"item": [
+										{
+											"name": "Получить статистику по объявлению",
+											"item": [
+												{
+													"name": "Существующему",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 200\", () => pm.response.to.have.status(200));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Ответ является массивом\", () => pm.expect(pm.response.json()).to.be.an('array'));",
+																	"pm.test(\"Массив содержит один элемент\", () => pm.expect(pm.response.json().length).to.equal(1));",
+																	"pm.test(\"Наличие всех полей\", () => pm.expect(pm.response.json()[0]).to.have.all.keys(\"contacts\", \"likes\", \"viewCount\"));",
+																	"pm.test(\"Поле contacts является числом\", () => pm.expect(pm.response.json()[0].contacts).to.be.a('number'));",
+																	"pm.test(\"Поле contacts неотрицательное\", () => pm.expect(pm.response.json()[0].contacts).to.be.at.least(0));",
+																	"pm.test(\"Поле likes является числом\", () => pm.expect(pm.response.json()[0].likes).to.be.a('number'));",
+																	"pm.test(\"Поле likes неотрицательное\", () => pm.expect(pm.response.json()[0].likes).to.be.at.least(0));",
+																	"pm.test(\"Поле viewCount является числом\", () => pm.expect(pm.response.json()[0].viewCount).to.be.a('number'));",
+																	"pm.test(\"Поле viewCount неотрицательное\", () => pm.expect(pm.response.json()[0].viewCount).to.be.at.least(0));",
+																	"pm.test(\"Логика: contacts <= likes <= viewCount\", () => {",
+																	"    const stats = pm.response.json()[0];",
+																	"    pm.expect(stats.contacts).to.be.at.most(stats.likes);",
+																	"    pm.expect(stats.likes).to.be.at.most(stats.viewCount);",
+																	"});"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/1/statistic/{{advertisementID}}",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"statistic",
+																"{{advertisementID}}"
+															]
+														},
+														"description": "Получить статистику по объявлению"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  },\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "Несуществующему",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 404\", () => pm.response.to.have.status(404));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message содержит текст 'передан некорректный идентификатор объявления'\", () => pm.expect(pm.response.json().result.message).to.equal(\"передан некорректный идентификатор объявления\"));",
+																	"pm.test(\"Наличие поля messages в result\", () => pm.expect(pm.response.json().result).to.have.property(\"messages\"));",
+																	"pm.test(\"Поле messages является объектом\", () => pm.expect(pm.response.json().result.messages).to.be.an('object'));",
+																	"pm.test(\"Поле messages пустое\", () => pm.expect(Object.keys(pm.response.json().result.messages)).to.be.empty);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status равно '400'\", () => pm.expect(pm.response.json().status).to.equal(\"400\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/1/statistic/6c1f8f94-e698-42f7-a151-77b0d9c47f1g",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"statistic",
+																"6c1f8f94-e698-42f7-a151-77b0d9c47f1g"
+															]
+														},
+														"description": "Получить статистику по объявлению"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  },\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "С некорректным adID",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 400\", () => pm.response.to.have.status(400));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message содержит текст 'передан некорректный идентификатор объявления'\", () => pm.expect(pm.response.json().result.message).to.equal(\"передан некорректный идентификатор объявления\"));",
+																	"pm.test(\"Наличие поля messages в result\", () => pm.expect(pm.response.json().result).to.have.property(\"messages\"));",
+																	"pm.test(\"Поле messages является объектом\", () => pm.expect(pm.response.json().result.messages).to.be.an('object'));",
+																	"pm.test(\"Поле messages пустое\", () => pm.expect(Object.keys(pm.response.json().result.messages)).to.be.empty);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status равно '400'\", () => pm.expect(pm.response.json().status).to.equal(\"400\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/1/statistic/-1",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"statistic",
+																"-1"
+															]
+														},
+														"description": "Получить статистику по объявлению"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  },\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "{sellerID}",
+							"item": [
+								{
+									"name": "item",
+									"item": [
+										{
+											"name": "Получить все объявления пользователя",
+											"item": [
+												{
+													"name": "Существующего",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 200\", () => pm.response.to.have.status(200));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Ответ является массивом\", () => pm.expect(pm.response.json()).to.be.an('array'));",
+																	"pm.test(\"Массив содержит минимум один элемент\", () => pm.expect(pm.response.json().length).to.be.at.least(1));",
+																	"pm.test(\"Все элементы массива являются объектами\", () => pm.response.json().forEach(item => pm.expect(item).to.be.an('object')));",
+																	"pm.test(\"Наличие всех полей в объектах\", () => pm.response.json().forEach(item => pm.expect(item).to.have.all.keys(\"createdAt\", \"id\", \"name\", \"price\", \"sellerId\", \"statistics\")));",
+																	"pm.test(\"Поле createdAt является строкой\", () => pm.response.json().forEach(item => pm.expect(item.createdAt).to.be.a('string')));",
+																	"pm.test(\"Поле createdAt имеет формат даты ISO 8601\", () => pm.response.json().forEach(item => pm.expect(item.createdAt).to.match(/^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{6} \\+\\d{4} \\+\\d{4}$/)));",
+																	"pm.test(\"Поле id является строкой\", () => pm.response.json().forEach(item => pm.expect(item.id).to.be.a('string')));",
+																	"pm.test(\"Поле id имеет формат UUID\", () => pm.response.json().forEach(item => pm.expect(item.id).to.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/)));",
+																	"pm.test(\"Поле name является строкой\", () => pm.response.json().forEach(item => pm.expect(item.name).to.be.a('string')));",
+																	"pm.test(\"Поле name не пустое\", () => pm.response.json().forEach(item => pm.expect(item.name).to.not.be.empty));",
+																	"pm.test(\"Поле price является числом\", () => pm.response.json().forEach(item => pm.expect(item.price).to.be.a('number')));",
+																	"pm.test(\"Поле price положительное\", () => pm.response.json().forEach(item => pm.expect(item.price).to.be.above(0)));",
+																	"pm.test(\"Поле sellerId является числом\", () => pm.response.json().forEach(item => pm.expect(item.sellerId).to.be.a('number')));",
+																	"pm.test(\"Поле sellerId положительное\", () => pm.response.json().forEach(item => pm.expect(item.sellerId).to.be.above(0)));",
+																	"pm.test(\"Объект statistics присутствует\", () => pm.response.json().forEach(item => pm.expect(item.statistics).to.be.an('object')));",
+																	"pm.test(\"Наличие всех полей в объекте statistics\", () => pm.response.json().forEach(item => pm.expect(item.statistics).to.have.all.keys(\"contacts\", \"likes\", \"viewCount\")));",
+																	"pm.test(\"Поле contacts является числом\", () => pm.response.json().forEach(item => pm.expect(item.statistics.contacts).to.be.a('number')));",
+																	"pm.test(\"Поле contacts неотрицательное\", () => pm.response.json().forEach(item => pm.expect(item.statistics.contacts).to.be.at.least(0)));",
+																	"pm.test(\"Поле likes является числом\", () => pm.response.json().forEach(item => pm.expect(item.statistics.likes).to.be.a('number')));",
+																	"pm.test(\"Поле likes неотрицательное\", () => pm.response.json().forEach(item => pm.expect(item.statistics.likes).to.be.at.least(0)));",
+																	"pm.test(\"Поле viewCount является числом\", () => pm.response.json().forEach(item => pm.expect(item.statistics.viewCount).to.be.a('number')));",
+																	"pm.test(\"Поле viewCount неотрицательное\", () => pm.response.json().forEach(item => pm.expect(item.statistics.viewCount).to.be.at.least(0)));",
+																	"pm.test(\"Логика: contacts <= likes <= viewCount\", () => pm.response.json().forEach(item => { pm.expect(item.statistics.contacts).to.be.at.most(item.statistics.likes); pm.expect(item.statistics.likes).to.be.at.most(item.statistics.viewCount); }));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/1/{{uniqueID}}/item",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"{{uniqueID}}",
+																"item"
+															]
+														},
+														"description": "Получить все объявления пользователя"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/:sellerID/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		":sellerID",
+																		"item"
+																	],
+																	"variable": [
+																		{
+																			"key": "sellerID"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  },\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/:sellerID/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		":sellerID",
+																		"item"
+																	],
+																	"variable": [
+																		{
+																			"key": "sellerID"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/:sellerID/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		":sellerID",
+																		"item"
+																	],
+																	"variable": [
+																		{
+																			"key": "sellerID"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "Несуществуюещего",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 400\", () => pm.response.to.have.status(400));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message содержит текст 'передан некорректный идентификатор продавца'\", () => pm.expect(pm.response.json().result.message).to.equal(\"передан некорректный идентификатор продавца\"));",
+																	"pm.test(\"Наличие поля messages в result\", () => pm.expect(pm.response.json().result).to.have.property(\"messages\"));",
+																	"pm.test(\"Поле messages является объектом\", () => pm.expect(pm.response.json().result.messages).to.be.an('object'));",
+																	"pm.test(\"Поле messages пустое\", () => pm.expect(Object.keys(pm.response.json().result.messages)).to.be.empty);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status равно '400'\", () => pm.expect(pm.response.json().status).to.equal(\"400\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/1/820485/item",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"820485",
+																"item"
+															]
+														},
+														"description": "Получить все объявления пользователя"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/:sellerID/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		":sellerID",
+																		"item"
+																	],
+																	"variable": [
+																		{
+																			"key": "sellerID"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  },\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/:sellerID/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		":sellerID",
+																		"item"
+																	],
+																	"variable": [
+																		{
+																			"key": "sellerID"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/:sellerID/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		":sellerID",
+																		"item"
+																	],
+																	"variable": [
+																		{
+																			"key": "sellerID"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "С некорректным SellerID",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 400\", () => pm.response.to.have.status(400));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message содержит текст 'передан некорректный идентификатор продавца'\", () => pm.expect(pm.response.json().result.message).to.equal(\"передан некорректный идентификатор продавца\"));",
+																	"pm.test(\"Наличие поля messages в result\", () => pm.expect(pm.response.json().result).to.have.property(\"messages\"));",
+																	"pm.test(\"Поле messages является объектом\", () => pm.expect(pm.response.json().result.messages).to.be.an('object'));",
+																	"pm.test(\"Поле messages пустое\", () => pm.expect(Object.keys(pm.response.json().result.messages)).to.be.empty);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status равно '400'\", () => pm.expect(pm.response.json().status).to.equal(\"400\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/1/-1/item",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"1",
+																"-1",
+																"item"
+															]
+														},
+														"description": "Получить все объявления пользователя"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/:sellerID/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		":sellerID",
+																		"item"
+																	],
+																	"variable": [
+																		{
+																			"key": "sellerID"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  },\n  {\n    \"id\": \"<string>\",\n    \"sellerId\": \"<integer>\",\n    \"name\": \"<string>\",\n    \"price\": \"<integer>\",\n    \"statistics\": {\n      \"likes\": \"<integer>\",\n      \"viewCount\": \"<integer>\",\n      \"contacts\": \"<integer>\"\n    },\n    \"createdAt\": \"<string>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/:sellerID/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		":sellerID",
+																		"item"
+																	],
+																	"variable": [
+																		{
+																			"key": "sellerID"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/:sellerID/item",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		":sellerID",
+																		"item"
+																	],
+																	"variable": [
+																		{
+																			"key": "sellerID"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "2",
+					"item": [
+						{
+							"name": "statistic",
+							"item": [
+								{
+									"name": "{id}",
+									"item": [
+										{
+											"name": "Получить статистику по объявлению",
+											"item": [
+												{
+													"name": "Существующему",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 200\", () => pm.response.to.have.status(200));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Ответ является массивом\", () => pm.expect(pm.response.json()).to.be.an('array'));",
+																	"pm.test(\"Массив содержит один элемент\", () => pm.expect(pm.response.json().length).to.equal(1));",
+																	"pm.test(\"Наличие всех полей\", () => pm.expect(pm.response.json()[0]).to.have.all.keys(\"contacts\", \"likes\", \"viewCount\"));",
+																	"pm.test(\"Поле contacts является числом\", () => pm.expect(pm.response.json()[0].contacts).to.be.a('number'));",
+																	"pm.test(\"Поле contacts неотрицательное\", () => pm.expect(pm.response.json()[0].contacts).to.be.at.least(0));",
+																	"pm.test(\"Поле likes является числом\", () => pm.expect(pm.response.json()[0].likes).to.be.a('number'));",
+																	"pm.test(\"Поле likes неотрицательное\", () => pm.expect(pm.response.json()[0].likes).to.be.at.least(0));",
+																	"pm.test(\"Поле viewCount является числом\", () => pm.expect(pm.response.json()[0].viewCount).to.be.a('number'));",
+																	"pm.test(\"Поле viewCount неотрицательное\", () => pm.expect(pm.response.json()[0].viewCount).to.be.at.least(0));",
+																	"pm.test(\"Логика: contacts <= likes <= viewCount\", () => {",
+																	"    const stats = pm.response.json()[0];",
+																	"    pm.expect(stats.contacts).to.be.at.most(stats.likes);",
+																	"    pm.expect(stats.likes).to.be.at.most(stats.viewCount);",
+																	"});"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/2/statistic/{{advertisementID}}",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"2",
+																"statistic",
+																"{{advertisementID}}"
+															]
+														},
+														"description": "Получить статистику по объявлению"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  },\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "Несуществующему",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 404\", () => pm.response.to.have.status(404));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message содержит текст 'передан некорректный идентификатор объявления'\", () => pm.expect(pm.response.json().result.message).to.equal(\"передан некорректный идентификатор объявления\"));",
+																	"pm.test(\"Наличие поля messages в result\", () => pm.expect(pm.response.json().result).to.have.property(\"messages\"));",
+																	"pm.test(\"Поле messages является объектом\", () => pm.expect(pm.response.json().result.messages).to.be.an('object'));",
+																	"pm.test(\"Поле messages пустое\", () => pm.expect(Object.keys(pm.response.json().result.messages)).to.be.empty);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status равно '400'\", () => pm.expect(pm.response.json().status).to.equal(\"400\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/2/statistic/6c1f8f94-e698-42f7-a151-77b0d9c47f1g",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"2",
+																"statistic",
+																"6c1f8f94-e698-42f7-a151-77b0d9c47f1g"
+															]
+														},
+														"description": "Получить статистику по объявлению"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  },\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "С некорректным adID",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 400\", () => pm.response.to.have.status(400));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message содержит текст 'передан некорректный идентификатор объявления'\", () => pm.expect(pm.response.json().result.message).to.equal(\"передан некорректный идентификатор объявления\"));",
+																	"pm.test(\"Наличие поля messages в result\", () => pm.expect(pm.response.json().result).to.have.property(\"messages\"));",
+																	"pm.test(\"Поле messages является объектом\", () => pm.expect(pm.response.json().result.messages).to.be.an('object'));",
+																	"pm.test(\"Поле messages пустое\", () => pm.expect(Object.keys(pm.response.json().result.messages)).to.be.empty);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status равно '400'\", () => pm.expect(pm.response.json().status).to.equal(\"400\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/2/statistic/-1",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"2",
+																"statistic",
+																"-1"
+															]
+														},
+														"description": "Получить статистику по объявлению"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "[\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  },\n  {\n    \"likes\": \"<integer>\",\n    \"viewCount\": \"<integer>\",\n    \"contacts\": \"<integer>\"\n  }\n]"
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/1/statistic/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"1",
+																		"statistic",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "item",
+							"item": [
+								{
+									"name": "{id}",
+									"item": [
+										{
+											"name": "Удалить объявление",
+											"item": [
+												{
+													"name": "Существующее",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 200\", () => pm.response.to.have.status(200));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "DELETE",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/2/item/{{advertisementID}}",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"2",
+																"item",
+																"{{advertisementID}}"
+															]
+														},
+														"description": "Удалить объявление по идентификатору"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [],
+																"url": {
+																	"raw": "{{baseUrl}}/api/2/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"2",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "text",
+															"header": [],
+															"cookie": [],
+															"body": ""
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/2/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"2",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/2/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"2",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/2/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"2",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												},
+												{
+													"name": "Несуществущее",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"pm.test(\"Статус код 400\", () => pm.response.to.have.status(400));",
+																	"pm.test(\"Тело ответа не пустое\", () => pm.expect(pm.response.text()).to.not.be.empty);",
+																	"pm.test(\"Тело ответа является JSON\", () => pm.expect(() => JSON.parse(pm.response.text())).to.not.throw());",
+																	"pm.test(\"Наличие поля result\", () => pm.expect(pm.response.json()).to.have.property(\"result\"));",
+																	"pm.test(\"Поле result является объектом\", () => pm.expect(pm.response.json().result).to.be.an('object'));",
+																	"pm.test(\"Наличие поля message в result\", () => pm.expect(pm.response.json().result).to.have.property(\"message\"));",
+																	"pm.test(\"Поле message является строкой\", () => pm.expect(pm.response.json().result.message).to.be.a('string'));",
+																	"pm.test(\"Поле message содержит текст 'переданный id айтема некорректный'\", () => pm.expect(pm.response.json().result.message).to.equal(\"переданный id айтема некорректный\"));",
+																	"pm.test(\"Наличие поля messages в result\", () => pm.expect(pm.response.json().result).to.have.property(\"messages\"));",
+																	"pm.test(\"Поле messages является объектом\", () => pm.expect(pm.response.json().result.messages).to.be.an('object'));",
+																	"pm.test(\"Поле messages пустое\", () => pm.expect(Object.keys(pm.response.json().result.messages)).to.be.empty);",
+																	"pm.test(\"Наличие поля status\", () => pm.expect(pm.response.json()).to.have.property(\"status\"));",
+																	"pm.test(\"Поле status является строкой\", () => pm.expect(pm.response.json().status).to.be.a('string'));",
+																	"pm.test(\"Поле status равно '400'\", () => pm.expect(pm.response.json().status).to.equal(\"400\"));"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "DELETE",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "application/json"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/2/item/{{advertisementID}}",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"2",
+																"item",
+																"{{advertisementID}}"
+															]
+														},
+														"description": "Удалить объявление по идентификатору"
+													},
+													"response": [
+														{
+															"name": "ok",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [],
+																"url": {
+																	"raw": "{{baseUrl}}/api/2/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"2",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "text",
+															"header": [],
+															"cookie": [],
+															"body": ""
+														},
+														{
+															"name": "Bad request",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/2/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"2",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Bad Request",
+															"code": 400,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {\n      \"culpa_b92\": \"<string>\",\n      \"enim_24f\": \"<string>\",\n      \"mollit_aa\": \"<string>\"\n    },\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														},
+														{
+															"name": "Not Found",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/2/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"2",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Not Found",
+															"code": 404,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": \"laborum\",\n  \"status\": \"cillum enim eiusmod\"\n}"
+														},
+														{
+															"name": "Server error",
+															"originalRequest": {
+																"method": "DELETE",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "application/json"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/2/item/:id",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"2",
+																		"item",
+																		":id"
+																	],
+																	"variable": [
+																		{
+																			"key": "id"
+																		}
+																	]
+																}
+															},
+															"status": "Internal Server Error",
+															"code": 500,
+															"_postman_previewlanguage": "json",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "application/json"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"result\": {\n    \"messages\": {},\n    \"message\": \"<string>\"\n  },\n  \"status\": \"<string>\"\n}"
+														}
+													]
+												}
+											]
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://qa-internship.avito.com"
+		},
+		{
+			"key": "usedIDs",
+			"value": ""
+		},
+		{
+			"key": "uniqueID",
+			"value": ""
+		},
+		{
+			"key": "name",
+			"value": ""
+		},
+		{
+			"key": "price",
+			"value": ""
+		},
+		{
+			"key": "likes",
+			"value": ""
+		},
+		{
+			"key": "viewCount",
+			"value": ""
+		},
+		{
+			"key": "contacts",
+			"value": ""
+		},
+		{
+			"key": "advertisementID",
+			"value": ""
+		}
+	]
+}
