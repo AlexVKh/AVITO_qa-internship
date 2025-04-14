@@ -1,6 +1,6 @@
 ### 1. Установите [Postman](https://www.postman.com/downloads/), если он ещё не установлен
 
-### 2. Сохраните прикрепленную Postman-коллекцию [тут] (https://github.com/AlexVKh/AVITO_qa-internship/blob/main/Postman_collection.json) 
+### 2. Сохраните прикрепленную Postman-коллекцию [тут](https://github.com/AlexVKh/AVITO_qa-internship/blob/main/Postman_collection.json) 
 
 ### 2. Импортируйте коллекцию:
 - Откройте Postman → **Import**
